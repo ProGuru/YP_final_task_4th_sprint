@@ -99,7 +99,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		speed = meanSpeed(steps, height, duration)
 		calories, _ = WalkingSpentCalories(steps, weight, height, duration)
 	default:
-		return "", errors.New("unknown training name")
+		return "", errors.New("неизвестный тип тренировки")
 	}
 
 	return fmt.Sprintf(
