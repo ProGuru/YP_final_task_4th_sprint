@@ -29,18 +29,18 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	steps, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return 0, "", 0, fmt.Errorf("number conversation problem: %v", err)
+		return 0, "", 0, fmt.Errorf("number conversation problem: %w", err)
 	}
 	if steps <= 0 {
-		return 0, "", 0, fmt.Errorf("negative or zero steps: %v", err)
+		return 0, "", 0, errors.New("negative or zero steps")
 	}
 
 	activityDuration, err := time.ParseDuration(parts[2])
 	if err != nil {
-		return 0, "", 0, fmt.Errorf("parsing time problem: %v", err)
+		return 0, "", 0, fmt.Errorf("parsing time problem: %w", err)
 	}
 	if activityDuration <= 0 {
-		return 0, "", 0, fmt.Errorf("negative or zero duration of activity: %v", err)
+		return 0, "", 0, errors.New("negative or zero duration of activity")
 	}
 
 	return steps, parts[1], activityDuration, nil
@@ -71,16 +71,16 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	steps, active, duration, err := parseTraining(data)
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("parsing problem: %v", err)
+		return "", fmt.Errorf("parsing problem: %w", err)
 	}
 	if steps <= 0 {
-		return "", fmt.Errorf("negative or zero steps: %v", err)
+		return "", errors.New("negative or zero steps")
 	}
 	if active == "" {
-		return "", fmt.Errorf("empty activity name: %v", err)
+		return "", errors.New("empty activity name")
 	}
 	if duration <= 0 {
-		return "", fmt.Errorf("negative or zero duration of activity: %v", err)
+		return "", errors.New("negative or zero duration of activity")
 	}
 
 	var (
@@ -114,8 +114,24 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 // RunningSpentCalories - рассчитывает потраченные калории после бега.
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	// TODO: реализовать функцию
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
+	if height <= 0 || duration <= 0 {
 		return 0, errors.New("one of input parameters less or equal 0")
+	}
+	if steps <= 0 {
+		log.Println("sign or zero problem")
+		return 0, errors.New("negative or zero steps")
+	}
+	if height <= 0 {
+		log.Println("sign or zero problem")
+		return 0, errors.New("negative or zero height")
+	}
+	if weight <= 0 {
+		log.Println("sign or zero problem")
+		return 0, errors.New("negative or zero weight")
+	}
+	if duration <= 0 {
+		log.Println("sign or zero problem")
+		return 0, errors.New("negative or zero duration")
 	}
 
 	speed := meanSpeed(steps, height, duration)
